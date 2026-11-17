@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn>=0.29
+langgraph>=1.0
+numpy                    # the in-memory vector store's cosine similarity needs it
+
+# Only for the server tests (python -m unittest discover tests):
+# httpx

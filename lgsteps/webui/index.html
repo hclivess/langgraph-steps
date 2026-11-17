@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>langgraph-steps · every step, visible</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>langgraph-steps</h1>
+    <p>A LangGraph graph you can watch. Press the start button: nodes light up as they run, the state changes, the graph decides which edge to take.</p>
+  </div>
+  <dl class="facts">
+    <div><dt>Documents</dt><dd id="f-docs">…</dd></div>
+    <div><dt>Paragraphs</dt><dd id="f-paragraphs">…</dd></div>
+    <div><dt>Checkpointer</dt><dd id="f-saver">…</dd></div>
+    <div><dt>Thread</dt><dd id="f-thread">–</dd></div>
+    <div><dt>Playback</dt><dd>
+      <select id="speed" title="The graph itself takes milliseconds. Playback slows the display so you can follow it.">
+        <option value="instant">instant</option>
+        <option value="normal" selected>normal</option>
+        <option value="slow">slow</option>
+      </select></dd></div>
+  </dl>
+</header>
+
+<main>
+<section>
+  <div class="sec-head">
+    <h2><span class="tag">A</span> Run the graph</h2>
+    <p>The graph searches the documents, grades what it found, and either answers, rewrites the query and tries again, or gives up.</p>
+  </div>
+
+  <form id="run-form" class="controls">
+    <label class="grow">Question
+      <input id="question" type="text" list="samples" autocomplete="off">
+      <datalist id="samples">
+        <option value="I just bought a monstera, where exactly should I put it regarding light?" label="one rewrite, then an answer">
+        <option value="which plants tolerate low light?" label="answered at once">
+        <option value="how do I change a flat car tyre?" label="gives up">
+        <option value="when is my sourdough starter ready?" label="gives up at 0.30, answers at 0.25">
+      </datalist>
+    </label>
+    <label>Relevant from score <output id="threshold-out"></output>
+      <input id="threshold" type="range" min="0.05" max="0.6" step="0.05">
+    </label>
+    <label>Searches before giving up
+      <input id="attempts" type="number" min="1" max="6">
+    </label>
+    <label class="check"><input id="approval" type="checkbox"> Ask a human before answering</label>
+    <button class="primary" id="run" type="submit">▶ Run the graph</button>
+  </form>
+
+  <div class="progress" aria-live="polite">
+    <div class="track"><div class="bar" id="run-bar"></div></div>
+    <span id="run-label">Nothing running.</span>
+  </div>
+
+  <div class="approval" id="approval-box">
+    <p><b>The graph is paused in <code>approve</code>.</b> <span id="approval-text"></span>
+      <small>interrupt() saved a checkpoint and stopped. Your answer is sent with Command(resume=…) and the run continues from that checkpoint.</small></p>
+    <button class="primary" id="approve-yes" type="button">✓ Approve</button>
+    <button id="approve-no" type="button">✗ Reject</button>
+  </div>
+
+  <div class="wide graph">
+    <div class="panel">
+      <h3>The graph <small>lgsteps/graph.py · drawn from graph.get_graph()</small></h3>
+      <svg id="graph" viewBox="0 0 680 320" role="img" aria-label="The graph's nodes and edges"></svg>
+      <div class="legend">
+        <span><i></i>edge: always taken</span>
+        <span><i class="dash"></i>conditional edge: a function picks one</span>
+        <span><i class="took"></i>taken in this run</span>
+        <span><i class="lastedge"></i>taken last</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>The state <small id="state-note">one shared dict; every node reads it and returns an update</small></h3>
+      <div class="state-box"><table class="state"><tbody id="state"></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <h2><span class="tag">B</span> What happened, step by step</h2>
+    <p>One card per node that ran: what the node does, the update it returned, and which edge the graph took next.</p>
+  </div>
+  <div class="timeline" id="timeline"><p class="empty">Nothing has run yet.</p></div>
+
+  <div class="wide">
+    <div class="panel">
+      <h3>The answer <small id="answer-note">state["answer"] when the graph reaches END</small></h3>
+      <div class="answer big" id="answer"><span class="empty">No run yet.</span></div>
+    </div>
+    <div class="panel">
+      <h3>Checkpoints <small id="cp-note">the state is saved after every step; a paused run resumes from the last one</small></h3>
+      <div class="log" id="checkpoints"><p class="empty">graph.get_state_history(thread) lists them after a run.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
