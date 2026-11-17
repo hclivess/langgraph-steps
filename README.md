@@ -109,6 +109,6 @@ In a real agent these three would call a model; the graph around them would
 stay the same. Checkpoints are kept in memory (`InMemorySaver`) and are gone
 when the server stops. Built with LangGraph 1.2.
 
-See also: [rag-sqlite](https://github.com/hclivess/rag-sqlite), the same kind of page for plain RAG without a framework.
+See also: [rag-steps](https://github.com/hclivess/rag-steps), the same kind of page for plain RAG without a framework.
 
 MIT licence.
