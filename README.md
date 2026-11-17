@@ -4,7 +4,13 @@ A small LangGraph graph you can **watch**. One local page with a start button:
 the nodes light up as they run, the state changes key by key, and you see which
 edge the graph decided to take. It can also stop and wait for you.
 
+![The web interface running: the graph searches, grades, rewrites the query, searches again and answers](demo.webp)
+
+<details><summary>The whole page after one run (still picture)</summary>
+
 ![The web interface after one run](thumb.png)
+
+</details>
 
 It runs offline: the search and the answer are small stand-ins, so no API key
 and no model download is needed. The graph, the state, the conditional edges,
